@@ -11,6 +11,7 @@ const theme = {
     color2: '#263544',
     color3: '#4A5867',
     color4: '#6B7987',
+    color5: '#BFCCD9',
     textColor: '#F4F4F4',
    
   },
