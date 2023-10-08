@@ -1,6 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
 import styled from 'styled-components/native';
 import RoutineItem from '../Components/RoutineItem';
+import routinen from '../database/database';
+import { useEffect, useState } from 'react';
 
 
 const Container = styled.View`
@@ -49,6 +51,17 @@ font-size: 22px;
 `;
 
 export default function Home() {
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000); // Aktualisiere die Uhrzeit alle 1000 ms (1 Sekunde)
+
+    return () => {
+      clearInterval(interval); // Aufräumen beim Unmount
+    };
+  }, []);
     return (
       <Container>
         <TimeHeader>
@@ -65,10 +78,28 @@ export default function Home() {
             <DayElement><DayText>SU</DayText></DayElement>
         </DaysContainer>
        <H3>Plan for Today</H3>
-       <RoutineItem name="Morgen Routine" startTime={"05:30"} numberOfActivities={8} duration={30} active={true}/>
-       <RoutineItem name="Training" startTime={"06:30"} numberOfActivities={2} duration={90}/>
+       {routinen.map((routine) => {
+        const routineStartTime = new Date(`2023-10-08T${routine.startTime}:00`);
+        console.log("starttime: "+routineStartTime)
+        const routineEndTime = new Date(routineStartTime.getTime() + routine.durationTime * 60000); // Umrechnung von Minuten in Millisekunden
+        console.log("endtime: "+routineEndTime)
+
+        const isActive = currentTime >= routineStartTime && currentTime <= routineEndTime;
+
+        return (
+          <RoutineItem
+            key={routine.routineName}
+            name={routine.routineName}
+            startTime={routine.startTime}
+            numberOfActivities={routine.activities.length}
+            duration={routine.durationTime}
+            active={isActive}
+          />
+        );
+      })}
+       {/* <RoutineItem name="Training" startTime={"06:30"} numberOfActivities={2} duration={90}/>
        <RoutineItem name="Arbeit" startTime={"08:00"} numberOfActivities={1} duration={120}/>
-       <RoutineItem name="Morgen Routine" startTime={"19:00"} numberOfActivities={5} duration={60}/>
+       <RoutineItem name="Morgen Routine" startTime={"19:00"} numberOfActivities={5} duration={60}/> */}
 
       </Container>
     );

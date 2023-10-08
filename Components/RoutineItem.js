@@ -25,7 +25,7 @@ export default function RoutineItem({name, startTime, numberOfActivities, durati
             <ItemLayoutContainer>
                
                 <Text style={{color: "white", fontSize: 25, fontWeight: "bold"}}>{name}</Text>
-                <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+                <View style={{flexDirection: "row", gap: 40}}>
                     <Text style={{color: "white", fontSize: 15}}>{numberOfActivities} Activites</Text>
                     <Text style={{color: "white", fontSize: 15}}>{duration}min</Text>
                 </View>
