@@ -51,41 +51,65 @@ font-size: 22px;
 `;
 
 export default function Home() {
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState("");
+  const [todaysDate, setTodaysDate] = useState("");
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentTime(new Date());
+      const currentDate = new Date()
+      const hours = currentDate.getHours();
+      const minutes = currentDate.getMinutes();
+      const formattedHours = hours < 10 ? `0${hours}` : hours;
+      const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+      const formattedTime = `${formattedHours}:${formattedMinutes}`;
+
+      setCurrentTime(formattedTime);
+
+      const day = currentDate.getDate();
+      const month = currentDate.getMonth() + 1; // Monate beginnen bei 0 (Januar) in JavaScript
+      const year = currentDate.getFullYear();
+      const formattedDay = day < 10 ? `0${day}` : day;
+      const formattedMonth = month < 10 ? `0${month}` : month;
+      const formattedDate = `${formattedDay}.${formattedMonth}.${year}`;
+      setTodaysDate(formattedDate)
+      // Beispielaufruf
+      const isTimeInInterval = checkIfTimeInInterval("06:00", 123, "08:02");
+
     }, 1000); // Aktualisiere die Uhrzeit alle 1000 ms (1 Sekunde)
 
+    
     return () => {
       clearInterval(interval); // Aufräumen beim Unmount
     };
   }, []);
-    return (
+
+  const daysOfWeek = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
+  const currentDate = new Date();
+  let currentDayIndex = currentDate.getDay(); // Gibt den Index des aktuellen Tages zurück (0 für Sonntag, 1 für Montag, usw.)
+  if(currentDayIndex === 0){
+    currentDayIndex = 7
+  }
+  currentDayIndex-=1;
+  console.log(currentDayIndex) 
+  return (
       <Container>
         <TimeHeader>
-            <TextElement>6:00</TextElement>
-            <TextElement>27.09.2023</TextElement>
+            <TextElement>{currentTime}</TextElement>
+            <TextElement>{todaysDate}</TextElement>
         </TimeHeader>
         <DaysContainer>
-            <DayElement active><DayText>MO</DayText></DayElement>
-            <DayElement><DayText>TU</DayText></DayElement>
-            <DayElement><DayText>WE</DayText></DayElement>
-            <DayElement><DayText>TH</DayText></DayElement>
-            <DayElement><DayText>FR</DayText></DayElement>
-            <DayElement><DayText>SA</DayText></DayElement>
-            <DayElement><DayText>SU</DayText></DayElement>
+        {daysOfWeek.map((day, index) => (
+        <DayElement key={day} active={index === currentDayIndex}>
+          <DayText>{day}</DayText>
+        </DayElement>
+      ))}
+          
         </DaysContainer>
        <H3>Plan for Today</H3>
        {routinen.map((routine) => {
-        const routineStartTime = new Date(`2023-10-08T${routine.startTime}:00`);
-        console.log("starttime: "+routineStartTime)
-        const routineEndTime = new Date(routineStartTime.getTime() + routine.durationTime * 60000); // Umrechnung von Minuten in Millisekunden
-        console.log("endtime: "+routineEndTime)
+     
 
-        const isActive = currentTime >= routineStartTime && currentTime <= routineEndTime;
-
+        const isActive = checkIfTimeInInterval(routine.startTime, routine.durationTime, currentTime)
         return (
           <RoutineItem
             key={routine.routineName}
@@ -104,3 +128,20 @@ export default function Home() {
       </Container>
     );
   }
+
+  function checkIfTimeInInterval(starttime, durationtime, currenttime) {
+    // Wandele die Zeiten in Minuten um
+    const startTimeInMinutes = convertToMinutes(starttime);
+    const endTimeInMinutes = startTimeInMinutes + durationtime;
+    const currentTimeInMinutes = convertToMinutes(currenttime);
+  
+    // Überprüfe, ob die currenttime innerhalb des Intervalls liegt
+    return currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes <= endTimeInMinutes;
+  }
+  
+  // Hilfsfunktion zur Umwandlung von Uhrzeit in Minuten
+  function convertToMinutes(timeString) {
+    const [hours, minutes] = timeString.split(":").map(Number);
+    return hours * 60 + minutes;
+  }
+  
