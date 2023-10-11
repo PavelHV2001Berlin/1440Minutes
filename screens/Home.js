@@ -18,7 +18,7 @@ font-size: 22px;
 font-weight: bold;
 `
 const TimeHeader = styled.View`
-padding-top: 50px;
+padding-top: 20px;
 width: 100%;
 flex-direction: row;
 justify-content: space-between;
@@ -50,31 +50,14 @@ font-weight: bold;
 font-size: 22px;
 `;
 
-export default function Home() {
+export default function Home({navigation}) {
   const [currentTime, setCurrentTime] = useState("");
   const [todaysDate, setTodaysDate] = useState("");
 
   useEffect(() => {
+    updateTime(setCurrentTime, setTodaysDate)
     const interval = setInterval(() => {
-      const currentDate = new Date()
-      const hours = currentDate.getHours();
-      const minutes = currentDate.getMinutes();
-      const formattedHours = hours < 10 ? `0${hours}` : hours;
-      const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-      const formattedTime = `${formattedHours}:${formattedMinutes}`;
-
-      setCurrentTime(formattedTime);
-
-      const day = currentDate.getDate();
-      const month = currentDate.getMonth() + 1; // Monate beginnen bei 0 (Januar) in JavaScript
-      const year = currentDate.getFullYear();
-      const formattedDay = day < 10 ? `0${day}` : day;
-      const formattedMonth = month < 10 ? `0${month}` : month;
-      const formattedDate = `${formattedDay}.${formattedMonth}.${year}`;
-      setTodaysDate(formattedDate)
-      // Beispielaufruf
-      const isTimeInInterval = checkIfTimeInInterval("06:00", 123, "08:02");
-
+      updateTime(setCurrentTime, setTodaysDate)
     }, 1000); // Aktualisiere die Uhrzeit alle 1000 ms (1 Sekunde)
 
     
@@ -91,6 +74,10 @@ export default function Home() {
   }
   currentDayIndex-=1;
   console.log(currentDayIndex) 
+
+  const navigateToActiveRoutine = (routine) => {
+    navigation.navigate('ActiveRoutine', { routine });
+  };
   return (
       <Container>
         <TimeHeader>
@@ -110,6 +97,9 @@ export default function Home() {
      
 
         const isActive = checkIfTimeInInterval(routine.startTime, routine.durationTime, currentTime)
+        if(isActive){
+          setTimeout(()=>navigateToActiveRoutine(routine), 1000)
+        }
         return (
           <RoutineItem
             key={routine.routineName}
@@ -143,5 +133,23 @@ export default function Home() {
   function convertToMinutes(timeString) {
     const [hours, minutes] = timeString.split(":").map(Number);
     return hours * 60 + minutes;
+  }
+  function updateTime(setCurrentTime, setTodaysDate){
+    const currentDate = new Date()
+    const hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+    const formattedHours = hours < 10 ? `0${hours}` : hours;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    const formattedTime = `${formattedHours}:${formattedMinutes}`;
+
+    setCurrentTime(formattedTime);
+
+    const day = currentDate.getDate();
+    const month = currentDate.getMonth() + 1; // Monate beginnen bei 0 (Januar) in JavaScript
+    const year = currentDate.getFullYear();
+    const formattedDay = day < 10 ? `0${day}` : day;
+    const formattedMonth = month < 10 ? `0${month}` : month;
+    const formattedDate = `${formattedDay}.${formattedMonth}.${year}`;
+    setTodaysDate(formattedDate)
   }
   

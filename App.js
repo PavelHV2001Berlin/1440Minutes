@@ -4,6 +4,12 @@ import { View } from 'react-native';
 import { ThemeProvider } from 'styled-components';
 import { useFonts } from 'expo-font';
 import * as Font from 'expo-font';
+import ProgessBar from './Components/ProgressBar';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { useEffect } from 'react';
+import AcitveRoutine from './screens/ActiveRoutine';
+
 const theme = {
   colors: {
     brand: '#6F43EC',
@@ -16,18 +22,32 @@ const theme = {
    
   },
 };
+const Stack = createStackNavigator();
 
 export default function App() {
-
+ 
   
 
   return (
-    <ThemeProvider theme={theme}>
-      <View style={{flex: 1}}>
-        <Home/>
-        <StatusBar style="auto" />
-      </View>
-    </ThemeProvider>
+    <NavigationContainer>
+     <StatusBar hidden={true}/>
+      <ThemeProvider theme={theme}>
+        <View style={{flex: 1}}>
+          <Stack.Navigator initialRouteName='SplashScreen'  screenOptions={{
+            headerShown: false
+          }}>
+            <Stack.Screen name='SplashScreen' component={ProgessBar}/>
+            <Stack.Screen name='Home' component={Home}/>
+            <Stack.Screen name='ActiveRoutine' component={AcitveRoutine}/>
+
+          </Stack.Navigator>
+        
+        </View>
+      </ThemeProvider>
+      <StatusBar style="auto" />
+
+    </NavigationContainer>
+  
   
     
   );
