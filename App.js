@@ -10,6 +10,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { useEffect } from 'react';
 import AcitveRoutine from './screens/ActiveRoutine';
 
+
 const theme = {
   colors: {
     brand: '#6F43EC',
@@ -38,7 +39,7 @@ export default function App() {
           }}>
             <Stack.Screen name='SplashScreen' component={ProgessBar}/>
             <Stack.Screen name='Home' component={Home}/>
-            <Stack.Screen name='ActiveRoutine' component={AcitveRoutine}/>
+            <Stack.Screen name='ActiveRoutine' component={AcitveRoutine} screenOptions={{headerShown: true}}/>
 
           </Stack.Navigator>
         
